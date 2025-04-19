@@ -1,88 +1,39 @@
 import type { EngineInitializer } from "./engine/game";
 
+import type { Assets } from "..";
 import HoverImage from "../assets/hover.webp";
-import { Animation } from "../components/animation";
-import { Easing } from "../components/animation/easing";
-import { Interpolater } from "../components/animation/interpolater";
-import { KeyFrame } from "../components/animation/keyframe";
-import { Image as GameImage } from "../components/gameImage";
-import { Position } from "../components/position";
-import { Scale } from "../components/scale";
-import { Size } from "../components/size";
-import { Components } from "./entitity-component-system/components";
-import { Entity } from "./entitity-component-system/entity";
+import { Position } from "../components/buildingBlocks/position";
+import { Initializing } from "../components/loaders/initializing";
+import { Tile } from "../components/tileHover";
 import type { GameState } from "./state";
 
-export type AssetName = "hover";
-
-export const createInitializer = (): EngineInitializer<GameState> => {
+export const createInitializer = (): EngineInitializer<GameState, Assets> => {
   return {
-    onInitialize: async (state, game) => {
-      const loadImage = createLoadImage(state);
+    onInitialize: async (state, _, utils) => {
+      state.uniqueEntities["initializingText"] = Initializing.Create(
+        new Position(
+          state.canvas.width / 2,
+          state.canvas.height / 2,
+          { anchor: "center" }
+        ),
+      )
 
       state.entities.push(
-        new Entity(
-          "tile-hover",
-          new Components([
-            new Position(0, 0, { anchor: "center" }),
-            new Size(50, 50),
-            new GameImage("hover"),
-            new Animation({
-              keyframes: new KeyFrame({
-                0: 1,
-                50: 0.90,
-                100: 1,
-              }),
-              duration: 2000,
-              loop: true,
-              easing: Easing.linear,
-              interpolater: new Interpolater([
-                new Scale()
-              ])
-            }),
-          ])
-        )
+        Tile.Create()
       )
 
       const promises = [
-        loadImage(HoverImage, "hover")
+        utils.loadImage(HoverImage, "hover"),
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(void 0);
+          }, 5000);
+        })
       ]
 
-      return Promise.all(promises).then(() => void 0);
+      await Promise.all(promises);
+
+      state.canvas.style.cursor = "none";
     }
-  }
-}
-
-const createLoadImage = (state: GameState) => {
-  return (src: string, name: AssetName): Promise<void> => {
-    const { resolve, reject, promise } = Promise.withResolvers<void>();
-  
-    const hoverImage = new Image();
-    hoverImage.src = src;
-
-    // Setup a maximum timeout for the image load
-    const timeout = setTimeout(() => {
-      if (hoverImage.complete) {
-        resolve();
-      } else {
-        reject(new Error(`Failed to load image: ${src}`));
-      }
-    }, 1000);
-
-    // Clear the timeout when the image loads or fails
-    promise.then(() => clearTimeout(timeout));
-    promise.catch(() => clearTimeout(timeout));
-  
-    // Add event listeners for load and error
-    hoverImage.addEventListener("error", (error) => {
-      reject(new Error(`Failed to load image: ${error.filename}`));
-    })
-  
-    hoverImage.addEventListener("load", () => {
-      state.assets[name] = hoverImage;
-      resolve();
-    })
-
-    return promise;
   }
 }

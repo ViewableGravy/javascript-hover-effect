@@ -2,7 +2,7 @@ import './style.css';
 import { Engine } from "./utilities/engine/game";
 import { createInitializer } from "./utilities/initializer";
 import { createRenderer } from "./utilities/renderer";
-import { createState } from "./utilities/state";
+import { createState, GameState } from "./utilities/state";
 import { createUpdater } from "./utilities/updater";
 
 // @ts-ignore
@@ -16,10 +16,14 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = /* html */`
   </div>
 `
 
+export type Assets = {
+  hover: HTMLImageElement
+}
+
 const initializeApplication = () => {
   const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 
-  const engine = new Engine({
+  const engine = new Engine<GameState, Assets>({
     canvas: canvas,
     state: createState(canvas),
     renderer: createRenderer(),
@@ -35,4 +39,6 @@ const initializeApplication = () => {
 
 }
 
-initializeApplication();
+// Delay initialization to ensure the DOM is fully loaded, otherwise we may start
+// our animation frames and then there is a weird delay before code is run again
+setTimeout(initializeApplication, 500);

@@ -1,34 +1,28 @@
+import type { Assets } from "..";
 import type { Entity } from "./entitity-component-system/entity";
-import type { AssetName } from "./initializer";
 
 
 export type GameState = InstanceType<typeof _State>;
 
+export type UniqueEntityNames = 
+  | "initializingText"
+
 class _State {
-  x: number;
-  y: number;
-  mouseX: number;
-  mouseY: number;
-  keys: string[];
   printStatistics: boolean;
   lastPrintTime: number;
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
-  assets: Record<AssetName, HTMLImageElement>;
+  assets: Record<keyof Assets, HTMLImageElement>;
   entities: Array<Entity<any>> = [];
+  uniqueEntities: Record<UniqueEntityNames, Entity<any>> = {} as Record<UniqueEntityNames, Entity<any>>;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.context = canvas.getContext('2d')!;
-    this.x = 100;
-    this.y = 100;
-    this.keys = [];
     this.printStatistics = false;
     this.lastPrintTime = 0;
-    this.assets = {} as Record<AssetName, HTMLImageElement>;
+    this.assets = {} as Record<keyof Assets, HTMLImageElement>;
     this.entities = [];
-    this.mouseX = 0;
-    this.mouseY = 0;
   }
 }
 

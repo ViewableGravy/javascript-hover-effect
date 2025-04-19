@@ -1,7 +1,7 @@
-import type { ReadonlyEngineState } from "../utilities/engine/game";
-import { Component, type Opts } from "../utilities/entitity-component-system/component";
-import type { Entity } from "../utilities/entitity-component-system/entity";
-import type { GameState } from "../utilities/state";
+import type { ReadonlyEngineState } from "../../utilities/engine/game";
+import { Component, type Opts } from "../../utilities/entitity-component-system/component";
+import type { Entity } from "../../utilities/entitity-component-system/entity";
+import type { GameState } from "../../utilities/state";
 
 
 export abstract class Render<TDependencies extends Record<string, new (...args: any) => any> = {}> extends Component<TDependencies> {

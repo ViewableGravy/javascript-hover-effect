@@ -1,4 +1,4 @@
-import { Component } from "../utilities/entitity-component-system/component";
+import { Component } from "../../utilities/entitity-component-system/component";
 import { Size } from "./size";
 
 

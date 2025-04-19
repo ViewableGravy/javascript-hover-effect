@@ -1,5 +1,5 @@
-import { Component } from "../utilities/entitity-component-system/component";
-import type { FrameCleanable } from "./frameCleanable";
+import { Component } from "../../utilities/entitity-component-system/component";
+import type { FrameCleanable } from "../frameCleanable";
 
 
 export class Size extends Component implements FrameCleanable {

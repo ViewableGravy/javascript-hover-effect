@@ -1,6 +1,9 @@
 import invariant from "tiny-invariant";
 import type { Component } from "./component";
 
+type Class<T> = new (...args: any[]) => T;
+type AbstractClass<T> = abstract new (...args: any[]) => T;
+
 export class Components<const TComponent extends Component = Component> {
   protected components: Map<string, TComponent> = new Map();
 
@@ -31,7 +34,7 @@ export class Components<const TComponent extends Component = Component> {
     }
   }
   
-  hasByType = <T>(type: new (...args: any[]) => T): boolean => {
+  hasByType = <T>(type: Class<T> | AbstractClass<T>): boolean => {
     for (const component of this.components.values()) {
       if (component instanceof type) {
         return true;
@@ -41,7 +44,7 @@ export class Components<const TComponent extends Component = Component> {
   }
 
   getByType = <T, TRequiresAtLeastOne extends boolean = true>(
-    type: new (...args: any[]) => T, 
+    type: Class<T> | AbstractClass<T>, 
     // @ts-ignore
     requireAtleastOne: TRequiresAtLeastOne = true
   ): GetByTypeReturnType<T, TRequiresAtLeastOne> => {

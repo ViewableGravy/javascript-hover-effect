@@ -42,7 +42,10 @@ export type RunningEngine = {
 
 export type Engine = UninitializedEngine | RunningEngine;
 
-export type EngineState<TState extends object = {}> = {
+export type EngineState<
+  TState extends object = {}, 
+  TAssets extends object = {}
+> = {
   renderStatistics: Statistics;
   engine: Engine;
   static: {
@@ -50,6 +53,7 @@ export type EngineState<TState extends object = {}> = {
     targetFrameTime: number;
     targetUpdateTime: number;
   };
+  assets: TAssets;
   external: TState;
   status: Status;
   isRunning: boolean;
@@ -61,7 +65,10 @@ export type EngineState<TState extends object = {}> = {
   isError: boolean;
 }
 
-export const createGameState = <TState extends object = {}>(canvas: HTMLCanvasElement, initialState: TState): EngineState<TState> => {
+export const createGameState = <
+  TState extends object = {}, 
+  TAssets extends object = {}
+>(canvas: HTMLCanvasElement, initialState: TState): EngineState<TState, TAssets> => {
   let status: Status = "uninitialized";
   let deltaTime = 0;
   let lastUpdated = 0;
@@ -72,7 +79,7 @@ export const createGameState = <TState extends object = {}>(canvas: HTMLCanvasEl
   let longestFrameTime = 0;
   let shortestFrameTime = Infinity;
 
-  const state: EngineState<TState> = {
+  const state: EngineState<TState, TAssets> = {
     renderStatistics: {
       get totalFrames() { return totalFrames },
       get averageFPS() { return averageFPS },
@@ -111,8 +118,11 @@ export const createGameState = <TState extends object = {}>(canvas: HTMLCanvasEl
     },
     /** Store for external state (outside of the engine) */
     external: initialState,
+    assets: {} as TAssets,
     set status(value: Status) { 
-      console.trace("status", value);
+      if (value === "error") {
+        console.trace("Engine has entered an error state");
+      }
       status = value; 
     },
     get status() { return status; },
