@@ -1,4 +1,4 @@
-import { Component } from "../utilities/ECS/component";
+import { Component } from "../utilities/entitity-component-system/component";
 import type { FrameCleanable } from "./frameCleanable";
 
 
@@ -12,7 +12,9 @@ export class Size extends Component implements FrameCleanable {
   public tickModifiedHeight: number = 0;
 
   constructor(width: number, height: number) {
-    super();
+    super(undefined, {
+      displayName: "size",
+    });
     this.width = width;
     this.height = height;
     this.tickModifiedWidth = width;

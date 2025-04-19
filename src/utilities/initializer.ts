@@ -1,4 +1,4 @@
-import type { EngineInitializer } from "../game";
+import type { EngineInitializer } from "./engine/game";
 
 import HoverImage from "../assets/hover.webp";
 import { Animation } from "../components/animation";
@@ -9,47 +9,23 @@ import { Image as GameImage } from "../components/gameImage";
 import { Position } from "../components/position";
 import { Scale } from "../components/scale";
 import { Size } from "../components/size";
-import { Components } from "./ECS/components";
-import { Entity } from "./ECS/entity";
+import { Components } from "./entitity-component-system/components";
+import { Entity } from "./entitity-component-system/entity";
 import type { GameState } from "./state";
 
-export type AssetNames = "hover";
+export type AssetName = "hover";
 
 export const createInitializer = (): EngineInitializer<GameState> => {
   return {
     onInitialize: async (state, game) => {
       const loadImage = createLoadImage(state);
 
-      window.addEventListener('resize', () => {
-        state.canvas.width = window.innerWidth;
-        state.canvas.height = window.innerHeight;
-      });
-
-      window.addEventListener('keydown', (ev) => {
-        if (state.keys.includes(ev.key)) {
-          return;
-        }
-
-        state.keys.push(ev.key);
-      })
-
-      window.addEventListener('keyup', (ev) => {
-        state.keys = state.keys.filter((key) => key !== ev.key);
-      })
-
-      window.addEventListener("mousemove", (ev) => {
-        const { clientX, clientY } = ev;
-
-        state.mouseX = clientX;
-        state.mouseY = clientY;
-      })
-
       state.entities.push(
         new Entity(
           "tile-hover",
           new Components([
             new Position(0, 0, { anchor: "center" }),
-            new Size(400, 400),
+            new Size(50, 50),
             new GameImage("hover"),
             new Animation({
               keyframes: new KeyFrame({
@@ -78,7 +54,7 @@ export const createInitializer = (): EngineInitializer<GameState> => {
 }
 
 const createLoadImage = (state: GameState) => {
-  return (src: string, name: AssetNames): Promise<void> => {
+  return (src: string, name: AssetName): Promise<void> => {
     const { resolve, reject, promise } = Promise.withResolvers<void>();
   
     const hoverImage = new Image();

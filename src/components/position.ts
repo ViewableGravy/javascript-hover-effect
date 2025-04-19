@@ -1,4 +1,4 @@
-import { Component } from "../utilities/ECS/component";
+import { Component } from "../utilities/entitity-component-system/component";
 import { Size } from "./size";
 
 type Anchor = "top-left" | "center";
@@ -12,7 +12,11 @@ export class Position extends Component<{ size: typeof Size }> {
   public anchor: Anchor;
 
   constructor(x: number, y: number, opts?: Opts) {
-    super({ size: Size });
+    super({ 
+      size: Size 
+    }, {
+      displayName: "position",
+    });
     this.x = x;
     this.y = y;
     this.anchor = opts?.anchor ?? "top-left";

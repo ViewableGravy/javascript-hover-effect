@@ -18,14 +18,33 @@ type Statistics = {
   frameTime: number;
 }
 
+export type UninitializedEngine = {
+  error: null;
+  canvas: HTMLCanvasElement;
+  frameId: null;
+  deltaTime: number;
+  lastUpdated: number;
+  mouseX: number;
+  mouseY: number;
+  keys: Record<string, boolean>;
+}
+
+export type RunningEngine = {
+  error: null;
+  canvas: HTMLCanvasElement;
+  frameId: number;
+  deltaTime: number;
+  lastUpdated: number;
+  mouseX: number;
+  mouseY: number;
+  keys: Record<string, boolean>;
+}
+
+export type Engine = UninitializedEngine | RunningEngine;
+
 export type EngineState<TState extends object = {}> = {
   renderStatistics: Statistics;
-  engine: {
-    frameId: number | null;
-    deltaTime: number;
-    lastUpdated: number;
-    error: Error | null;
-  };
+  engine: Engine;
   static: {
     targetFrameRate: number;
     targetFrameTime: number;
@@ -42,7 +61,7 @@ export type EngineState<TState extends object = {}> = {
   isError: boolean;
 }
 
-export const createGameState = <TState extends object = {}>(initialState: TState): EngineState<TState> => {
+export const createGameState = <TState extends object = {}>(canvas: HTMLCanvasElement, initialState: TState): EngineState<TState> => {
   let status: Status = "uninitialized";
   let deltaTime = 0;
   let lastUpdated = 0;
@@ -73,6 +92,10 @@ export const createGameState = <TState extends object = {}>(initialState: TState
     engine: {
       frameId: null,
       error: null,
+      canvas: canvas,
+      mouseX: 0,
+      mouseY: 0,
+      keys: {},
       get deltaTime() { return deltaTime },
       get lastUpdated() { return lastUpdated },
       set lastUpdated(time: number) { 

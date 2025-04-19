@@ -1,4 +1,5 @@
-import { createGameState, type EngineState } from "./utilities/createInitialGameState";
+import { createGameState, type EngineState } from "../createInitialGameState";
+import { registerEventListeners } from "./register-event-listeners";
 
 /***** TYPE DEFINITIONS *****/
 export type ReadonlyEngineState = Readonly<Omit<EngineState, "external">>;
@@ -22,6 +23,7 @@ export type EngineInitializer<TState extends object> = {
 }
 
 type Opts<TState extends object> = {
+  canvas: HTMLCanvasElement
   state: TState,
   updater: EngineUpdater<NoInfer<TState>>
   renderer: EngineRenderer<NoInfer<TState>>
@@ -38,7 +40,7 @@ export class Engine<TState extends object = {}> {
   public initializer?: EngineInitializer<TState>;
 
   constructor(opts: Opts<TState>) {
-    this.state = createGameState(opts.state);
+    this.state = createGameState(opts.canvas, opts.state);
     this.updater = opts.updater;
     this.renderer = opts.renderer;
     this.initializer = opts.initializer;
@@ -46,6 +48,8 @@ export class Engine<TState extends object = {}> {
 
   public start() {
     this.state.status = "initializing";
+
+    this.initialize();
 
     this.initializingPromise?.then(() => void 0);
     this.initializingPromise?.catch(() => void 0);
@@ -85,6 +89,10 @@ export class Engine<TState extends object = {}> {
 
     // Request the next frame
     this.state.engine.frameId = requestAnimationFrame((time) => this.gameLoop(time));
+  }
+
+  private initialize() {
+    registerEventListeners(this.state);
   }
 
   private update() {

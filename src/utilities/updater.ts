@@ -1,7 +1,7 @@
 import invariant from "tiny-invariant";
 import { Animation } from "../components/animation";
 import { Position } from "../components/position";
-import type { EngineUpdater } from "../game";
+import type { EngineUpdater } from "./engine/game";
 import type { GameState } from "./state";
 
 export const createUpdater = (): EngineUpdater<GameState> => {
@@ -28,8 +28,8 @@ export const createUpdater = (): EngineUpdater<GameState> => {
         invariant(hover, "tile-hover entity not found");
 
         const [hoverPosition] = hover.components.getByType(Position);
-        hoverPosition.x = state.mouseX;
-        hoverPosition.y = state.mouseY;
+        hoverPosition.x = game.engine.mouseX;
+        hoverPosition.y = game.engine.mouseY;
         // const speed = 5;
         // if (state.keys.includes('ArrowUp') || state.keys.includes('w')) {
         //   hoverPosition.y = Math.max(hoverPosition.y - speed, 0);

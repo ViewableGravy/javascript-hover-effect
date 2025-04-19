@@ -1,5 +1,5 @@
-import type { Component } from "../../utilities/ECS/component";
-import { Components } from "../../utilities/ECS/components";
+import type { Component } from "../../utilities/entitity-component-system/component";
+import { Components } from "../../utilities/entitity-component-system/components";
 
 type NumberApplicableComponent = Component & {
   apply: (value: number) => void;

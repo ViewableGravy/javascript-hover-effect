@@ -1,5 +1,5 @@
-import { Component } from "../../utilities/ECS/component";
-import { Components } from "../../utilities/ECS/components";
+import { Component } from "../../utilities/entitity-component-system/component";
+import { Components } from "../../utilities/entitity-component-system/components";
 import { Easing } from "./easing";
 import type { Interpolater } from "./interpolater";
 import type { KeyFrame } from "./keyframe";

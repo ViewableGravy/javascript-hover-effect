@@ -1,8 +1,8 @@
-import { Engine } from "./game";
 import './style.css';
+import { Engine } from "./utilities/engine/game";
 import { createInitializer } from "./utilities/initializer";
 import { createRenderer } from "./utilities/renderer";
-import { createState, type GameState } from "./utilities/state";
+import { createState } from "./utilities/state";
 import { createUpdater } from "./utilities/updater";
 
 // @ts-ignore
@@ -18,12 +18,9 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = /* html */`
 
 const initializeApplication = () => {
   const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
-  const context = canvas.getContext('2d');
-  if (!context) {
-    throw new Error('Failed to get canvas context');
-  }
 
-  const engine = new Engine<GameState>({
+  const engine = new Engine({
+    canvas: canvas,
     state: createState(canvas),
     renderer: createRenderer(),
     updater: createUpdater(),
@@ -39,15 +36,3 @@ const initializeApplication = () => {
 }
 
 initializeApplication();
-
-// const grid = document.querySelector<HTMLDivElement>('#grid')!;
-// let clearGrid = createGrid(grid, {
-//   cellSize: 50
-// });
-
-// window.addEventListener('resize', () => {
-//   clearGrid();
-//   clearGrid = createGrid(grid, {
-//     cellSize: 50
-//   });
-// });

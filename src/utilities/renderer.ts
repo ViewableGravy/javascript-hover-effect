@@ -1,5 +1,5 @@
 import { Render } from "../components/renderable";
-import type { EngineRenderer } from "../game";
+import type { EngineRenderer } from "./engine/game";
 import type { GameState } from "./state";
 
 

@@ -1,4 +1,4 @@
-import { Component } from "../../utilities/ECS/component";
+import { Component } from "../../utilities/entitity-component-system/component";
  
 type Percent = number;
 
@@ -10,7 +10,9 @@ export class KeyFrame extends Component {
   public percentages: Opts;
 
   constructor(opts: Opts) {
-    super();
+    super(undefined, {
+      displayName: "keyframe",
+    });
     this.percentages = opts;
   }
 }
