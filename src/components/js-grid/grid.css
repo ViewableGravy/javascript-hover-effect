@@ -1,0 +1,125 @@
+@property --grid-hover-scale {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.97;
+}
+
+@keyframes wiggle {
+  0%   { --grid-hover-scale: 0.95; }
+  100%  { --grid-hover-scale: 0.91; }
+}
+
+/***** GRID START *****/
+.Grid {
+  --Grid-background-color: rgb(0, 139, 166);
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding-left: 8px;
+  padding-top: 8px;
+  background-color: var(--Grid-background-color);
+
+  animation: wiggle 1.5s infinite ease-in-out alternate;
+}
+
+/***** GRID CELL START *****/
+.GridCell {
+  --GridCell-background-color: rgb(0, 152, 183);
+
+  position: absolute;
+  background-color: var(--GridCell-background-color);
+  position: relative;
+  box-shadow: 0 0 2px 2px rgb(0, 131, 158);
+}
+
+/***** GRID HOVER START *****/
+.GridHover__container {  
+  --GridHover--width: var(--size, 50px);
+  --GridHover--height: var(--size, 50px);
+  --GridHover--thickness: calc(var(--GridHover--width) * 0.08);
+  --GridHover--length: calc(var(--GridHover--height) * 0.25);
+  --GridHover--color: rgb(0, 255, 251);
+  
+  width: var(--GridHover--width);
+  height: var(--GridHover--height);
+  
+  position: absolute;
+  transform: translate(-50%, -50%) scale(var(--grid-hover-scale));
+  left: 50%;
+  top: 50%;
+}
+
+.GridHover__corner {
+  position: absolute;
+  
+  width: var(--GridHover--length);
+  height: var(--GridHover--length);
+}
+
+.GridHover__corner--top-left {
+  left: 0;
+  top: 0;
+}
+
+.GridHover__corner--top-right {
+  transform: rotate(90deg);
+  right: 0;
+  top: 0;
+}
+
+.GridHover__corner--bottom-right {
+  transform: rotate(180deg);
+  right: 0;
+  bottom: 0;
+}
+
+.GridHover__corner--bottom-left {
+  transform: rotate(270deg);
+  left: 0;
+  bottom: 0;
+}
+
+.GridHover__left {
+  position: absolute;
+
+  height: var(--GridHover--length);
+  width: var(--GridHover--thickness);
+  background: var(--GridHover--color);
+
+  border-top-left-radius: calc(var(--GridHover--thickness) * 2);
+  border-bottom-left-radius: var(--GridHover--thickness);
+  border-bottom-right-radius: var(--GridHover--thickness);
+}
+
+.GridHover__right {
+  position: absolute;
+  left: var(--GridHover--thickness);
+  height: var(--GridHover--thickness);
+  width: calc(var(--GridHover--length) - var(--GridHover--thickness));
+  
+  background: var(--GridHover--color);
+
+  border-top-right-radius: var(--GridHover--thickness);
+  border-bottom-right-radius: var(--GridHover--thickness);
+}
+
+.GridHover__inner-corner {
+  position: absolute;
+  top: var(--GridHover--thickness);
+  left: var(--GridHover--thickness);
+  height: calc(var(--GridHover--length) - var(--GridHover--thickness));
+  width: calc(var(--GridHover--length) - var(--GridHover--thickness));
+  background: var(--GridHover--color);
+}
+
+.GridHover__inner-corner::after {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: calc(var(--GridHover--length) - var(--GridHover--thickness) + calc(var(--GridHover--thickness) / 2));
+  height: calc(var(--GridHover--length) - var(--GridHover--thickness) + calc(var(--GridHover--thickness) / 2));
+  content: "";
+  border-top-left-radius: calc(var(--GridHover--thickness) / 2);
+  background: var(--GridCell-background-color);
+}
