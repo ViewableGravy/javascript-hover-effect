@@ -1,9 +1,9 @@
 import './style.css';
-import { Engine } from "./utilities/engine/game";
-import { createInitializer } from "./utilities/initializer";
-import { createRenderer } from "./utilities/renderer";
+import { Engine } from "./utilities/engine/engine";
+import { Initializer } from './utilities/initializer';
+import { Renderer } from './utilities/renderer';
 import { createState, GameState } from "./utilities/state";
-import { createUpdater } from "./utilities/updater";
+import { Updater } from "./utilities/updater";
 
 // @ts-ignore
 import Resolvers from "promise.withresolvers";
@@ -26,9 +26,9 @@ const initializeApplication = () => {
   const engine = new Engine<GameState, Assets>({
     canvas: canvas,
     state: createState(canvas),
-    renderer: createRenderer(),
-    updater: createUpdater(),
-    initializer: createInitializer()
+    renderer: new Renderer(),
+    updater: new Updater(),
+    initializer: new Initializer()
   })
 
   canvas.width = window.innerWidth;

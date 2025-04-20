@@ -1,4 +1,4 @@
-import type { ReadonlyEngineState } from "../../utilities/engine/game";
+import type { ReadonlyEngineState } from "../../utilities/engine/engine";
 import { Component, type Opts } from "../../utilities/entitity-component-system/component";
 import type { Entity } from "../../utilities/entitity-component-system/entity";
 import type { GameState } from "../../utilities/state";

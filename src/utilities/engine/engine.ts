@@ -1,43 +1,12 @@
 import { createGameState, type EngineState } from "../createInitialGameState";
 import { EngineUtils } from "./createUtils";
+import { EngineInitializer } from "./initializer";
 import { registerEventListeners } from "./register-event-listeners";
+import { EngineRenderer } from "./renderer";
+import { EngineUpdater } from "./updater";
 
 /***** TYPE DEFINITIONS *****/
 export type ReadonlyEngineState = Readonly<Omit<EngineState, "external">>;
-
-type RenderCallback<TState extends object, TAssets extends object> = (
-  state: TState,
-  global: ReadonlyEngineState,
-  utils: EngineUtils<TState, TAssets>
-) => void;
-
-type UpdaterCallback<TState extends object, TAssets extends object> = (
-  state: TState,
-  global: ReadonlyEngineState,
-  utils: EngineUtils<TState, TAssets>
-) => void;
-
-type InitializerCallback<TState extends object, TAssets extends object> = (
-  state: TState,
-  global: ReadonlyEngineState,
-  utils: EngineUtils<TState, TAssets>
-) => Promise<void>;
-
-export type EngineRenderer<TState extends object, TAssets extends object> = {
-  onInitializingRender?: RenderCallback<TState, TAssets>;
-  onRunningRender?: RenderCallback<TState, TAssets>;
-  onRender: RenderCallback<TState, TAssets>;
-}
-
-export type EngineUpdater<TState extends object, TAssets extends object> = {
-  onInitializingUpdate?: UpdaterCallback<TState, TAssets>;
-  onRunningUpdate?: UpdaterCallback<TState, TAssets>;
-  onUpdate?: UpdaterCallback<TState, TAssets>;
-}
-
-export type EngineInitializer<TState extends object, TAssets extends object> = {
-  onInitialize: InitializerCallback<TState, TAssets>;
-}
 
 type Opts<TState extends object, TAssets extends object> = {
   canvas: HTMLCanvasElement
@@ -76,7 +45,7 @@ export class Engine<
     this.initializingPromise?.then(() => void 0);
     this.initializingPromise?.catch(() => void 0);
 
-    this.initializingPromise = this.initializer?.onInitialize(this.state.external, this.state, this.utils) ?? Promise.resolve();
+    this.initializingPromise = this.initializer?.initialize(this.state.external, this.state, this.utils) ?? Promise.resolve();
     this.initializingPromise
       .then(() => {
         this.state.status = "running";
@@ -87,7 +56,7 @@ export class Engine<
         this.state.engine.error = e;
         console.error("Engine initialization error:", e);
       })
-      
+
     this.gameLoop(performance.now());
   }
 
@@ -103,7 +72,7 @@ export class Engine<
     }, 100);
   }
 
-  private gameLoop(time: number) {  
+  private gameLoop(time: number) {
     this.state.engine.lastUpdated = time;
 
     // Update game state
@@ -113,7 +82,7 @@ export class Engine<
     this.render();
 
     // Request the next frame
-    this.state.engine.frameId = requestAnimationFrame((time) => this.gameLoop(time)); 
+    this.state.engine.frameId = requestAnimationFrame((time) => this.gameLoop(time));
   }
 
   private initialize() {
@@ -121,50 +90,56 @@ export class Engine<
   }
 
   private update() {
-    this.updater.onUpdate?.(
+    this.updater.update(
       this.state.external,
       this.state,
       this.utils
     );
 
-    if (this.state.status === "initializing") {
-      this.updater.onInitializingUpdate?.(
-        this.state.external,
-        this.state,
-        this.utils
-      )
-    }
-
-    if (this.state.status === "running") {
-      this.updater.onRunningUpdate?.(
-        this.state.external,
-        this.state,
-        this.utils
-      )
-    }
-  }
-
-  private render() {
-    this.renderer.onRender(
-      this.state.external, 
+    this.updateCallback?.(
+      this.state.external,
       this.state,
       this.utils
     );
-    
-    if (this.state.status === "initializing") {
-      this.renderer.onInitializingRender?.(
-        this.state.external,
-        this.state,
-        this.utils
-      )
-    }
+  }
 
-    if (this.state.status === "running") {
-      this.renderer.onRunningRender?.(
-        this.state.external,
-        this.state,
-        this.utils
-      )
+  private render() {
+    this.renderer.render(
+      this.state.external,
+      this.state,
+      this.utils
+    );
+
+    this.renderCallback?.(
+      this.state.external,
+      this.state,
+      this.utils
+    )
+  }
+
+  private get renderCallback() {
+    switch (this.state.status) {
+      case "initializing":
+        return this.renderer.renderInitializing;
+      case "running":
+        return this.renderer.renderRunning;
+      case "paused":
+        return this.renderer.renderPaused;
+      default:
+        throw new Error("Invalid engine status");
+    }
+  }
+
+  private get updateCallback() {
+    switch (this.state.status) {
+      case "initializing":
+        return this.updater.updateInitializing;
+      case "running":
+        return this.updater.updateRunning;
+      case "paused":
+        return this.updater.updatePaused;
+      default:
+        throw new Error("Invalid engine status");
     }
   }
 }
