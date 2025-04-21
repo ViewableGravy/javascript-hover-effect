@@ -10,7 +10,7 @@ export class KeyFrame extends Component {
   public percentages: Opts;
 
   constructor(opts: Opts) {
-    super(undefined, {
+    super({
       displayName: "keyframe",
     });
     this.percentages = opts;

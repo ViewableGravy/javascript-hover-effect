@@ -8,9 +8,10 @@ import { Size } from "./size";
 export class Image extends Render<{ position: typeof Position, size: typeof Size }> {
   constructor(public assetName: keyof Assets) {
     super({
-      position: Position,
-      size: Size,
-    }, {
+      dependencies: {
+        position: Position,
+        size: Size,
+      },
       displayName: "image",
     });
   }

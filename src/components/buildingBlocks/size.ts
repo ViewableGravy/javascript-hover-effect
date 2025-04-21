@@ -12,7 +12,7 @@ export class Size extends Component implements FrameCleanable {
   public tickModifiedHeight: number = 0;
 
   constructor(width: number, height: number) {
-    super(undefined, {
+    super({
       displayName: "size",
     });
     this.width = width;

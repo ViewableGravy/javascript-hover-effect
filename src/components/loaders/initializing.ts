@@ -40,10 +40,11 @@ export const Initializing = {
 export class TextRender extends Render<{ position: typeof Position, size: typeof Size }> {
   constructor(private text: string) {
     super({
-      position: Position,
-      size: Size,
-    }, {
-      displayName: "text"
+      dependencies: {
+        position: Position,
+        size: Size,
+      },
+      displayName: "text",
     });
   }
 

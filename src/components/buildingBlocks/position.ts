@@ -13,8 +13,9 @@ export class Position extends Component<{ size: typeof Size }> {
 
   constructor(x: number, y: number, opts?: Opts) {
     super({ 
-      size: Size 
-    }, {
+      dependencies: {
+        size: Size 
+      },
       displayName: "position",
     });
     this.x = x;
@@ -23,7 +24,7 @@ export class Position extends Component<{ size: typeof Size }> {
   }
 
   getTransformedPosition() {
-    const [size] = this.getDependencies("size");
+    const size = this.getSingleDependency("size");
 
     switch (this.anchor) {
       case "top-left":

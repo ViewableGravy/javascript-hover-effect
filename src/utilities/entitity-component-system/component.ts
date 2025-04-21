@@ -9,9 +9,11 @@ export type ActionsMap = {
 
 export type Actions = "any" | "frameCleanup";
 
-export type Opts = {
+export type Dependencies = Record<string, new (...args: any) => any>;
+export type Opts<TDependencies extends Dependencies> = {
   cardinality?: "unique" | "non-unique";
   displayName?: string;
+  dependencies?: TDependencies;
 }
 
 // export type Component<TAction extends Actions = Actions> = {
@@ -23,15 +25,15 @@ export type Opts = {
 // }
 
 /***** COMPONENT START *****/
-export class Component<TDependencies extends Record<string, new (...args: any) => any> = {}> {
+export class Component<TDependencies extends Dependencies = {}> {
   protected parent!: Components<any>;
   public id = _.uniqueId("component");
   public actions: Array<Actions> = [];
   public dependencies: TDependencies;
   private cardinality: "unique" | "non-unique" = "unique";
 
-  constructor(dependencies: TDependencies = {} as TDependencies, opts: Opts = {}) {
-    this.dependencies = dependencies;
+  constructor(opts: Opts<TDependencies> = {}) {
+    this.dependencies = opts.dependencies ?? {} as TDependencies;
     this.cardinality = opts.cardinality ?? "unique";
     this.id = opts.displayName ? `${opts.displayName}-${this.id}` : this.id;
   }
